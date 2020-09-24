@@ -11,18 +11,16 @@
 </template>
 
 <script>
-import eventApi from '@/apis/event.api'
 import EventCard from '@/components/EventCard.vue'
+import { mapState } from 'vuex'
+
 export default {
   components: {
     EventCard,
   },
-  async asyncData({ $axios, error }) {
+  async fetch({ store, error }) {
     try {
-      const { data } = await eventApi.getEvents()
-      return {
-        events: data,
-      }
+      await store.dispatch('events/fetchEvents')
     } catch (e) {
       error({
         statusCode: 503,
@@ -34,6 +32,11 @@ export default {
     return {
       title: 'Event Listing',
     }
+  },
+  computed: {
+    ...mapState({
+      events: (state) => state.events.events,
+    }),
   },
 }
 </script>
